@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <title>Mis tareas</title>
+</head>
+<body>
+  <h1>Mis tareas</h1>
+  <input id="texto" placeholder="Nueva tarea">
+  <button id="agregar">Agregar</button>
+  <ul id="lista"></ul>
+  <script>
+    // aquí va tu JavaScript
+
+    async function cargar() {
+  // fetch("/tareas") -> .json() -> vaciar la lista (lista.innerHTML = "")
+  // y por cada tarea crear un <li> con su texto y un botón "Borrar"
+  // (el botón llama a borrar(tarea.id))
+}
+
+async function agregar() {
+  // fetch POST a "/tareas" con el texto del input
+  // limpiar el input y volver a llamar cargar()
+}
+
+async function borrar(id) {
+  // fetch DELETE a "/tareas/" + id
+  // volver a llamar cargar()
+}
+
+document.getElementById("agregar").addEventListener("click", agregar);
+cargar();
+
+const lista = document.getElementById("lista");
+
+async function cargar() {
+  const res = await fetch("/tareas");
+  const tareas = await res.json();
+  lista.innerHTML = "";
+
+  tareas.forEach(function (tarea) {
+    const li = document.createElement("li");
+    li.textContent = tarea.texto + " ";
+
+    const boton = document.createElement("button");
+    boton.textContent = "Borrar";
+    boton.addEventListener("click", function () {
+      borrar(tarea.id);
+    });
+
+    li.appendChild(boton);
+    lista.appendChild(li);
+  });
+}
+
+cargar();
+
+async function borrar(id) {
+  await fetch("/tareas/" + id, { method: "DELETE" });
+  cargar();
+}
+
+async function agregar() {
+  const input = document.getElementById("texto");
+  await fetch("/tareas", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ texto: input.value })
+  });
+  input.value = "";
+  cargar();
+}
+
+document.getElementById("agregar").addEventListener("click", agregar);
+
+
+  </script>
+</body>
+</html>
